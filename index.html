@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Potions Cocktail Theatre | Ambawatta One, Delhi</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,400;1,500&family=Jost:wght@300;400&family=Playfair+Display:ital@1&family=Space+Mono&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Iconify -->
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+
+    <style>
+        /* Essential Keyframes & Pseudo-elements that cannot be inline */
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0px rgba(200,146,42,0); }
+            50% { box-shadow: 0 0 25px rgba(200,146,42,0.4); }
+            100% { box-shadow: 0 0 0px rgba(200,146,42,0); }
+        }
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        @keyframes ambientPulse {
+            0% { background-color: rgba(15,12,16,0.5); }
+            100% { background-color: rgba(20,16,22,0.8); }
+        }
+        @keyframes lineGrow {
+            0% { height: 0; }
+            100% { height: 100%; }
+        }
+        
+        .animate-marquee {
+            animation: marquee 25s linear infinite;
+        }
+        .animate-pulse-glow {
+            animation: pulseGlow 3s infinite ease-in-out;
+        }
+        .animate-ambient {
+            animation: ambientPulse 8s infinite alternate ease-in-out;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #080608; }
+        ::-webkit-scrollbar-thumb { background: #1E1A22; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #C8922A; }
+
+        /* Base Typography Overrides for Text Selection */
+        ::selection { background: #C8922A; color: #080608; }
+        
+        /* Hide Cursor for Custom Cursor */
+        body { cursor: none; overflow-x: hidden; }
+        a, button, input, textarea, select { cursor: none; }
+        
+        /* Form Autofill fix for dark theme */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus, 
+        input:-webkit-autofill:active{
+            -webkit-box-shadow: 0 0 0 30px #0F0C10 inset !important;
+            -webkit-text-fill-color: #F0EAE0 !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+    </style>
+</head>
+
+<!-- Body with Ambient Candlelight Background -->
+<body class="bg-[#080608] text-[#F0EAE0] font-['Jost'] font-light antialiased" 
+      style="background-image: 
+        radial-gradient(ellipse 40vw 50vh at 20% 60%, rgba(200,146,42,0.06), transparent),
+        radial-gradient(ellipse 30vw 40vh at 80% 40%, rgba(200,146,42,0.04), transparent),
+        radial-gradient(ellipse 25vw 35vh at 50% 80%, rgba(139,26,26,0.04), transparent);
+        background-attachment: fixed;">
+
+    <!-- Grain Texture Overlay -->
+    <svg style="position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:9999; opacity:0.035;">
+        <filter id="grain">
+            <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/>
+            <feColorMatrix type="saturate" values="0"/>
+        </filter>
+        <rect width="100%" height="100%" filter="url(#grain)"/>
+    </svg>
+
+    <!-- Custom Cursor -->
+    <div id="cursor-dot" class="fixed top-0 left-0 w-2 h-2 bg-[#C8922A] rounded-full pointer-events-none z-[10000] -translate-x-1/2 -translate-y-1/2" style="transition: transform 0s, width 0.2s, height 0.2s, background-color 0.2s;"></div>
+    <div id="cursor-circle" class="fixed top-0 left-0 w-10 h-10 border border-[#C8922A] rounded-full pointer-events-none z-[9999] -translate-x-1/2 -translate-y-1/2 flex items-center justify-center text-[#F0EAE0] font-['Space_Mono'] text-[8px] tracking-[0.2em] text-center" style="transition: transform 0s, width 0.3s, height 0.3s, background-color 0.3s; opacity: 0.6;">
+        <span id="cursor-text" class="opacity-0 transition-opacity duration-300"></span>
+    </div>
+
+    <!-- Scroll Progress -->
+    <div class="fixed top-0 left-0 h-[2px] bg-[#C8922A] z-[9000] transition-all duration-100 ease-out" id="scroll-progress" style="width: 0%;"></div>
+
+    <!-- Floating Reserve Button -->
+    <a href="#reserve" class="fixed bottom-6 right-6 z-[8000] bg-[#C8922A] text-[#080608] px-6 py-3 rounded-full font-['Space_Mono'] text-xs uppercase tracking-widest flex items-center gap-2 animate-pulse-glow transition-transform duration-300 hover:scale-105 shadow-xl shadow-black/50 hover-trigger">
+        <iconify-icon icon="solar:glass-water-linear" stroke-width="1.5" class="text-sm"></iconify-icon>
+        Reserve
+    </a>
+
+    <!-- Preloader -->
+    <div id="preloader" class="fixed inset-0 z-[9999] bg-[#080608] flex flex-col items-center justify-center overflow-hidden">
+        <div class="relative z-10 flex flex-col items-center">
+            <div id="preloader-symbol" class="text-[#C8922A] text-4xl mb-6 opacity-0 transition-opacity duration-1000 ease-in-out">▲</div>
+            <h1 id="preloader-title" class="font-['Cormorant_Garamond'] font-light text-5xl md:text-7xl tracking-[0.4em] text-[#F0EAE0] h-20 uppercase"></h1>
+            <div id="preloader-subtitle" class="font-['Space_Mono'] text-xs text-[#C8922A] tracking-[0.5em] mt-4 opacity-0 transition-opacity duration-500 uppercase">Cocktail Theatre</div>
+            <div class="w-0 h-[1px] bg-[#C8922A] mt-8 transition-all duration-1000 ease-in-out" id="preloader-line"></div>
+        </div>
+        <div id="curtain-left" class="absolute top-0 left-0 w-1/2 h-full bg-[#080608] z-20" style="transition: transform 1.2s cubic-bezier(0.77,0,0.18,1);"></div>
+        <div id="curtain-right" class="absolute top-0 right-0 w-1/2 h-full bg-[#080608] z-20" style="transition: transform 1.2s cubic-bezier(0.77,0,0.18,1);"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed top-0 w-full z-[8000] transition-all duration-500 px-6 py-5 flex justify-between items-center border-b border-transparent">
+        <div class="flex items-center gap-3">
+            <span class="text-[#C8922A] text-xs">▲</span>
+            <span class="font-['Cormorant_Garamond'] font-light text-xl tracking-[0.3em] uppercase">Potions</span>
+        </div>
+        
+        <!-- Desktop Nav -->
+        <div class="hidden md:flex items-center gap-8 font-['Space_Mono'] text-xs tracking-[0.15em] text-[#7A7070] uppercase">
+            <a href="#cocktails" class="hover:text-[#C8922A] relative group hover-trigger">
+                Cocktails
+                <span class="absolute -bottom-2 left-0 w-0 h-[1px] bg-[#C8922A] transition-all duration-300 group-hover:w-full"></span>
+            </a>
+            <a href="#kitchen" class="hover:text-[#C8922A] relative group hover-trigger">
+                Food
+                <span class="absolute -bottom-2 left-0 w-0 h-[1px] bg-[#C8922A] transition-all duration-300 group-hover:w-full"></span>
+            </a>
+            <a href="#vibe" class="hover:text-[#C8922A] relative group hover-trigger">
+                Vibe
+                <span class="absolute -bottom-2 left-0 w-0 h-[1px] bg-[#C8922A] transition-all duration-300 group-hover:w-full"></span>
+            </a>
+            <a href="#reserve" class="border border-[#C8922A] text-[#C8922A] px-5 py-2 rounded-full hover:bg-[#C8922A] hover:text-[#080608] transition-colors duration-300 hover-trigger">
+                Reserve Now
+            </a>
+        </div>
+
+        <!-- Mobile Menu Toggle -->
+        <button id="mobile-menu-btn" class="md:hidden flex flex-col gap-[6px] hover-trigger z-[9000]">
+            <span class="w-6 h-[1px] bg-[#C8922A] block transition-all duration-300"></span>
+            <span class="w-6 h-[1px] bg-[#C8922A] block transition-all duration-300"></span>
+            <span class="w-4 h-[1px] bg-[#C8922A] block self-end transition-all duration-300"></span>
+        </button>
+    </nav>
+
+    <!-- Mobile Fullscreen Menu -->
+    <div id="mobile-menu" class="fixed inset-0 bg-[#080608]/95 backdrop-blur-xl z-[8500] flex flex-col items-center justify-center gap-8 opacity-0 pointer-events-none transition-opacity duration-500">
+        <a href="#cocktails" class="font-['Cormorant_Garamond'] font-light text-4xl text-[#F0EAE0] tracking-widest uppercase hover:text-[#C8922A] mobile-link">Cocktails</a>
+        <a href="#kitchen" class="font-['Cormorant_Garamond'] font-light text-4xl text-[#F0EAE0] tracking-widest uppercase hover:text-[#C8922A] mobile-link">Food</a>
+        <a href="#vibe" class="font-['Cormorant_Garamond'] font-light text-4xl text-[#F0EAE0] tracking-widest uppercase hover:text-[#C8922A] mobile-link">Vibe</a>
+        <a href="#events" class="font-['Cormorant_Garamond'] font-light text-4xl text-[#F0EAE0] tracking-widest uppercase hover:text-[#C8922A] mobile-link">Events</a>
+        <a href="#reserve" class="mt-8 border border-[#C8922A] text-[#C8922A] px-8 py-4 font-['Space_Mono'] text-xs tracking-widest uppercase mobile-link">Reserve Table</a>
+    </div>
+
+    <main class="relative w-full overflow-hidden">
+        
+        <!-- SECTION: HERO -->
+        <section id="hero" class="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden">
+            <!-- Parallax Background Image -->
+            <div id="hero-bg" class="absolute top-[-10%] left-0 w-full h-[120%] z-0 bg-cover bg-center opacity-0 transition-opacity duration-2000 ease-in" style="background-image: url('https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=1600&q=80');">
+                <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(8,6,8,0.6) 0%, rgba(8,6,8,0.4) 40%, rgba(8,6,8,0.95) 100%);"></div>
+            </div>
+
+            <!-- Content -->
+            <div class="relative z-10 text-center flex flex-col items-center px-6 w-full max-w-5xl mt-12">
+                
+                <div class="hero-el opacity-0 translate-y-6 transition-all duration-1000 delay-[500ms] flex flex-col items-center gap-4 mb-8">
+                    <p class="font-['Space_Mono'] text-[10px] text-[#C8922A] tracking-[0.25em] uppercase">
+                        [ Ambawatta One · New Delhi · Est. 2024 ]
+                    </p>
+                    <span class="text-[#C8922A] text-[10px]">▲</span>
+                </div>
+
+                <div class="flex flex-col items-center justify-center w-full">
+                    <div class="overflow-hidden py-1">
+                        <h2 class="hero-line translate-y-[120%] font-['Cormorant_Garamond'] font-light text-5xl md:text-8xl tracking-tight text-[#F0EAE0] leading-[0.9] transition-transform duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] delay-[700ms]">Cocktails</h2>
+                    </div>
+                    <div class="overflow-hidden py-1 my-[-10px] md:my-[-20px] z-10">
+                        <h2 class="hero-line translate-y-[120%] font-['Cormorant_Garamond'] font-medium italic text-5xl md:text-8xl tracking-tight text-[#C8922A] leading-[0.9] transition-transform duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] delay-[950ms]">with a</h2>
+                    </div>
+                    <div class="overflow-hidden py-1">
+                        <h2 class="hero-line translate-y-[120%] font-['Cormorant_Garamond'] font-light text-5xl md:text-8xl tracking-tight text-[#F0EAE0] leading-[0.9] transition-transform duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] delay-[1200ms]">Story.</h2>
+                    </div>
+                </div>
+
+                <p class="hero-el opacity-0 translate-y-6 transition-all duration-1000 delay-[1600ms] font-['Playfair_Display'] italic text-base md:text-lg text-[#7A7070] mt-10 max-w-md">
+                    Plates that Sizzle.<br>
+                    Qutub Minar in the View.<br>
+                    Magic in the Air.
+                </p>
+
+                <div class="hero-el opacity-0 transition-opacity duration-1000 delay-[2000ms] mt-12 flex flex-col sm:flex-row items-center gap-6">
+                    <a href="#reserve" class="bg-[#C8922A] text-[#080608] font-['Space_Mono'] text-xs tracking-widest uppercase px-12 py-4 animate-pulse-glow hover-trigger transition-transform hover:-translate-y-1">
+                        Reserve a Table
+                    </a>
+                    <a href="#cocktails" class="border border-[#C8922A] text-[#F0EAE0] font-['Space_Mono'] text-xs tracking-widest uppercase px-12 py-4 hover:bg-[#C8922A] hover:text-[#080608] transition-all hover-trigger">
+                        Explore Menu &rarr;
+                    </a>
+                </div>
+            </div>
+
+            <!-- Scroll Indicator -->
+            <div class="absolute bottom-24 right-8 flex flex-col items-center gap-4 opacity-50 z-20">
+                <span class="font-['Space_Mono'] text-[10px] text-[#7A7070] tracking-[0.2em] uppercase origin-center rotate-90 w-16 text-center">Scroll</span>
+                <div class="w-[1px] h-16 bg-[#1E1A22] relative overflow-hidden mt-4">
+                    <div class="absolute top-0 left-0 w-full bg-[#C8922A]" style="animation: lineGrow 2s infinite ease-in-out;"></div>
+                </div>
+            </div>
+
+            <!-- Marquee -->
+            <div class="absolute bottom-0 left-0 w-full overflow-hidden border-t border-[#1E1A22] py-3 bg-[#080608]/80 backdrop-blur-sm z-20">
+                <div class="whitespace-nowrap flex w-[200%] animate-marquee">
+                    <span class="font-['Space_Mono'] text-[10px] text-[#7A7070] tracking-[0.2em] uppercase mx-4">
+                        COCKTAILS WITH A STORY ·· PLATES THAT SIZZLE ·· QUTUB MINAR IN THE VIEW ·· MAGIC IN THE AIR ·· AMBAWATTA ONE DELHI ··
+                    </span>
+                    <span class="font-['Space_Mono'] text-[10px] text-[#7A7070] tracking-[0.2em] uppercase mx-4">
+                        COCKTAILS WITH A STORY ·· PLATES THAT SIZZLE ·· QUTUB MINAR IN THE VIEW ·· MAGIC IN THE AIR ·· AMBAWATTA ONE DELHI ··
+                    </span>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: AMBIENCE INTRO -->
+        <section class="bg-[#0F0C10] w-full py-24 relative z-10 border-b border-[#1E1A22] animate-ambient">
+            <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 divide-y md:divide-y-0 md:divide-x divide-[#1E1A22]">
+                
+                <div class="reveal opacity-0 translate-y-8 transition-all duration-1000 flex flex-col items-center text-center md:px-8 pt-8 md:pt-0">
+                    <iconify-icon icon="solar:cup-star-linear" stroke-width="1.5" class="text-[#C8922A] text-4xl mb-6"></iconify-icon>
+                    <h3 class="font-['Cormorant_Garamond'] italic text-2xl text-[#F0EAE0] mb-4 tracking-tight">Cocktails with a Story</h3>
+                    <p class="font-['Jost'] font-light text-sm text-[#7A7070] leading-relaxed max-w-xs">
+                        Every cocktail is a narrative — crafted to transport you somewhere unforgettable with rare spirits and theatrical presentation.
+                    </p>
+                </div>
+
+                <div class="reveal opacity-0 translate-y-8 transition-all duration-1000 delay-100 flex flex-col items-center text-center md:px-8 pt-12 md:pt-0">
+                    <iconify-icon icon="solar:plate-linear" stroke-width="1.5" class="text-[#C8922A] text-4xl mb-6"></iconify-icon>
+                    <h3 class="font-['Cormorant_Garamond'] italic text-2xl text-[#F0EAE0] mb-4 tracking-tight">Plates that Sizzle</h3>
+                    <p class="font-['Jost'] font-light text-sm text-[#7A7070] leading-relaxed max-w-xs">
+                        A curated menu that complements every pour — food as theatre, flavour as an unforgettable performance.
+                    </p>
+                </div>
+
+                <div class="reveal opacity-0 translate-y-8 transition-all duration-1000 delay-200 flex flex-col items-center text-center md:px-8 pt-12 md:pt-0">
+                    <iconify-icon icon="solar:moon-linear" stroke-width="1.5" class="text-[#C8922A] text-4xl mb-6"></iconify-icon>
+                    <h3 class="font-['Cormorant_Garamond'] italic text-2xl text-[#F0EAE0] mb-4 tracking-tight">Qutub Minar View</h3>
+                    <p class="font-['Jost'] font-light text-sm text-[#7A7070] leading-relaxed max-w-xs">
+                        Delhi's most iconic backdrop — where deep history and avant-garde nightlife meet in perfect harmony.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION: SIGNATURE COCKTAILS -->
+        <section id="cocktails" class="py-32 relative w-full">
+            <div class="max-w-7xl mx-auto px-6">
+                
+                <div class="reveal opacity-0 translate-y-8 transition-all duration-1000 text-center mb-20 flex flex-col items-center">
+                    <span class="font-['Space_Mono'] text-[10px] text-[#C8922A] tracking-[0.3em] uppercase mb-6">[ Our Potions ]</span>
+                    <h2 class="font-['Cormorant_Garamond'] font-light text-5xl md:text-7xl text-[#F0EAE0] tracking-tight mb-4">The Art of the Cocktail</h2>
+                    <p class="font-['Playfair_Display'] italic text-lg text-[#7A7070]">Each potion tells a story. Find yours.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    
+                    <!-- Card 1 -->
+                    <div class="reveal opacity-0 translate-y-12 transition-all duration-1000 bg-[#15111A] border border-[#1E1A22] h-[480px] group hover:-translate-y-2 hover:shadow-[0_0_25px_rgba(200,146,42,0.15)] hover:border-[#C8922A]/30 transition-all duration-500 flex flex-col hover-trigger image-hover">
+                        <div class="h-[60%] w-full overflow-hidden relative border-b border-[#1E1A22]">
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#15111A] to-transparent z-10"></div>
+                            <img src="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=600&q=80" alt="Cocktail" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 parallax-img">
+                        </div>
+                        <div class="p-6 flex flex-col flex-grow justify-between relative z-20 bg-[#15111A]">
+                            <div>
+                                <span class="font-['Space_Mono'] text-[9px] text-[#C8922A] tracking-[0.2em] uppercase block mb-2">Signature</span>
+                                <h4 class="font-['Cormorant_Garamond'] font-normal text-xl text-[#F0EAE0] tracking-tight mb-2">Imagine Me & You</h4>
+                                <p class="font-['Jost'] font-light text-xs text-[#7A7070] line-clamp-2">Smoked mezcal, passionfruit, chili tincture, amber fog.</p>
+                            </div>
+                            <div class="mt-4 flex justify-between items-end">
+                                <span class="w-6 h-[1px] bg-[#1E1A22] group-hover:bg-[#C8922A] transition-colors duration-300 mb-2"></span>
+                                <span class="font-['Playfair_Display'] italic text-[#C8922A] text-sm group-hover:scale-110 transition-transform origin-right">₹1250</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="reveal opacity-0 translate-y-12 transition-all duration-1000 delay-100 bg-[#15111A] border border-[#1E1A22] h-[480px] group hover:-translate-y-2 hover:shadow-[0_0_25px_rgba(200,146,42,0.15)] hover:border-[#C8922A]/30 transition-all duration-500 flex flex-col hover-trigger image-hover">
+                        <div class="h-[60%] w-full overflow-hidden relative border-b border-[#1E1A22]">
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#15111A] to-transparent z-10"></div>
+                            <img src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=600&q=80" alt="Cocktail" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 parallax-img">
+                        </div>
+                        <div class="p-6 flex flex-col flex-grow justify-between relative z-20 bg-[#15111A]">
+                            <div>
+                                <span class="font-['Space_Mono'] text-[9px] text-[#C8922A] tracking-[0.2em] uppercase block mb-2">Classic Reimagined</span>
+                                <h4 class="font-['Cormorant_Garamond'] font-normal text-xl text-[#F0EAE0] tracking-tight mb-2">Pure Distilled Escapism</h4>
+                                <p class="font-['Jost'] font-light text-xs text-[#7A7070] line-clamp-2">Aged rum, clarified pineapple, bitter cacao, gold leaf.</p>
+                            </div>
+                            <div class="mt-4 flex justify-between items-end">
+                                <span class="w-6 h-[1px] bg-[#1E1A22] group-hover:bg-[#C8922A] transition-colors duration-300 mb-2"></span>
+                                <span class="font-['Playfair_Display'] italic text-[#C8922A] text-sm group-hover:scale-110 transition-transform origin-right">₹1100</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="reveal opacity-0 translate-y-12 transition-all duration-1000 delay-200 bg-[#15111A] border border-[#1E1A22] h-[480px] group hover:-translate-y-2 hover:shadow-[0_0_25px_rgba(200,146,42,0.15)] hover:border-[#C8922A]/30 transition-all duration-500 flex flex-col hover-trigger image-hover">
+                        <div class="h-[60%] w-full overflow-hidden relative border-b border-[#1E1A22]">
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#15111A] to-transparent z-10"></div>
+                            <img src="https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=600&q=80" alt="Cocktail" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 parallax-img">
+                        </div>
+                        <div class="p-6 flex flex-col flex-grow justify-between relative z-20 bg-[#15111A]">
+                            <div>
+                                <span class="font-['Space_Mono'] text-[9px] text-[#C8922A] tracking-[0.2em] uppercase block mb-2">Premium Experience</span>
+                                <h4 class="font-['Cormorant_Garamond'] font-normal text-xl text-[#F0EAE0] tracking-tight mb-2">Magic in the Air</h4>
+                                <p class="font-['Jost'] font-light text-xs text-[#7A7070] line-clamp-2">Botanical gin, butterfly pea flower, citrus cloud.</p>
+                            </div>
+                            <div class="mt-4 flex justify-between items-end">
+                                <span class="w-6 h-[1px] bg-[#1E1A22] group-hover:bg-[#C8922A] transition-colors duration-300 mb-2"></span>
+                                <span class="font-['Playfair_Display'] italic text-[#C8922A] text-sm group-hover:scale-110 transition-transform origin-right">₹1450</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div class="reveal opacity-0 translate-y-12 transition-all duration-1000 delay-300 bg-[#15111A] border border-[#1E1A22] h-[480px] group hover:-translate-y-2 hover:shadow-[0_0_25px_rgba(200,146,42,0.15)] hover:border-[#C8922A]/30 transition-all duration-500 flex flex-col hover-trigger image-hover">
+                        <div class="h-[60%] w-full overflow-hidden relative border-b border-[#1E1A22]">
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#15111A] to-transparent z-10"></div>
+                            <img src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/917d6f93-fb36-439a-8c48-884b67b35381_1600w.jpg" alt="Cocktail" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 parallax-img">
+                        </div>
+                        <div class="p-6 flex flex-col flex-grow justify-between relative z-20 bg-[#15111A]">
+                            <div>
+                                <span class="font-['Space_Mono'] text-[9px] text-[#C8922A] tracking-[0.2em] uppercase block mb-2">House Special</span>
+                                <h4 class="font-['Cormorant_Garamond'] font-normal text-xl text-[#F0EAE0] tracking-tight mb-2">The Qutub</h4>
+                                <p class="font-['Jost'] font-light text-xs text-[#7A7070] line-clamp-2">Bourbon, roasted spices, maple, angostura, smoked table-side.</p>
+                            </div>
+                            <div class="mt-4 flex justify-between items-end">
+                                <span class="w-6 h-[1px] bg-[#1E1A22] group-hover:bg-[#C8922A] transition-colors duration-300 mb-2"></span>
+                                <span class="font-['Playfair_Display'] italic text-[#C8922A] text-sm group-hover:scale-110 transition-transform origin-right">₹1300</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: FOOD MENU -->
+        <section id="kitchen" class="py-32 bg-[#0F0C10] border-y border-[#1E1A22] relative z-10">
+            <div class="max-w-6xl mx-auto px-6">
+                
+                <div class="reveal opacity-0 translate-y-8 transition-all duration-1000 text-center mb-20 flex flex-col items-center">
+                    <span class="font-['Space_Mono'] text-[10px] text-[#C8922A] tracking-[0.3em] uppercase mb-6">[ The Kitchen ]</span>
+                    <h2 class="font-['Cormorant_Garamond'] font-light text-5xl md:text-7xl text-[#F0EAE0] tracking-tight">Plates that Sizzle</h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-16">
+                    
+                    <div class="reveal opacity-0 translate-y-8 transition-all duration-1000">
+                        <h3 class="font-['Space_Mono'] text-xs text-[#C8922A] tracking-widest uppercase border-b border-[#1E1A22] pb-4 mb-8">Small Plates</h3>
+                        <ul class="space-y-6">
+                            <li class="group hover-trigger">
+                                <h4 class="font-['Playfair_Display'] italic text-lg text-[#F0EAE0] group-hover:text-[#C8922A] transition-colors">Madhuban Paneer Tikka</h4>
+                                <p class="font-['Jost'] font-light text-xs text-[#7A7070] mt-1">Stuffed cottage cheese, rich saffron marinade.</p>
+                            </li>
+                            <li class="group hover-trigger">
+                                <h4 class="font-['Playfair_Display'] italic text-lg text-[#F0EAE0] group-hover:text-[#C8922A] transition-colors">Truffle Mushroom Crostini</h4>
+                                <p class="font-['Jost'] font-light text-xs text-[#7A7070] mt-1">Wild mushrooms, truffle oil, parmesan dust.</p>
+                            </li>
+                            <li class="group hover-trigger">
+                                <h4 class="font-['Playfair_Display'] italic text-lg text-[#F0EAE0] group-hover:text-[#C8922A] transition-colors">Lamb Galouti Sliders</h4>
+                                <p class="font-['Jost'] font-light text-xs text-[#7A7070] mt-1">Melt-in-mouth lamb, saffron bread, mint chutney.</p>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="reveal opacity-0 translate-y-8 transition-all duration-1000 delay-100">
+                        <h3 class="font-['Space_Mono'] text-xs text-[#C8922A] tracking-widest uppercase border-b border-[#1E1A22] pb-4 mb-8">Main Course</h3>
+                        <ul class="space-y-6">
+                            <li class="group hover-trigger">
+                                <h4 class="font-['Playfair_Display'] italic text-lg text-[#F0EAE0] group-hover:text-[#C8922A] transition-colors">Dal Makhani Noir</h4>
+                                <p class="font-['Jost'] font-light text-xs text-[#7A7070] mt-1">24-hour slow-cooked black lentils, smoked butter.</p>
+                            </li>
+                            <li class="group hover-trigger">
+                                <h4 class="font-['Playfair_Display'] italic text-lg text-[#F0EAE0] group-hover:text-[#C8922A] transition-colors">Butter Chicken Reimagined</h4>
+                                <p class="font-['Jost'] font-light text-xs text-[#7A7070] mt-1">Pulled tandoori chicken, creamy tomato velouté.</p>
+                            </li>
+                            <li class="group hover-trigger">
+                                <h4 class="font-['Playfair_Display'] italic text-lg text-[#F0EAE0] group-hover:text-[#C8922A] transition-colors">Coastal Fish Curry</h4>
+                                <p class="font-['Jost'] font-light text-xs text-[#7A7070] mt-1">Pan-seared catch of the day, kokum coconut broth.</p>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="reveal opacity-0 translate-y-8 transition-all duration-1000 delay-200">
+                        <h3 class="font-['Space_Mono'] text-xs text-[#C8922A] tracking-widest uppercase border-b border-[#1E1A22] pb-4 mb-8">Desserts</h3>
+                        <ul class="space-y-6">
+                            <li class="group hover-trigger">
+                                <h4 class="font-['Playfair_Display'] italic text-lg text-[#F0EAE0] group-hover:text-[#C8922A] transition-colors">Gulab Jamun Soufflé</h4>
+                                <p class="font-['Jost'] font-light text-xs text-[#7A7070] mt-1">Classic flavors, French technique, pistachio crumble.</p>
+                            </li>
+                            <li class="group hover-trigger">
+                                <h4 class="font-['Playfair_Display'] italic text-lg text-[#F0EAE0] group-hover:text-[#C8922A] transition-colors">Dark Chocolate Theatre</h4>
+                                <p class="font-['Jost'] font-light text-xs text-[#7A7070] mt-1">70% single origin dome, hot caramel pour.</p>
+                            </li>
+                            <li class="group hover-trigger">
+                                <h4 class="font-['Playfair_Display'] italic text-lg text-[#F0EAE0] group-hover:text-[#C8922A] transition-colors">Saffron Panna Cotta</h4>
+                                <p class="font-['Jost'] font-light text-xs text-[#7A7070] mt-1">Almond praline, edible gold leaf.</p>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+
+                <div class="mt-20 text-center reveal opacity-0 translate-y-8 transition-all duration-1000">
+                    <a href="#" class="inline-block text-[#C8922A] font-['Space_Mono'] text-xs tracking-widest uppercase hover:text-[#F0EAE0] transition-colors border-b border-[#C8922A] pb-1 hover-trigger">
+                        View Full Menu &rarr;
+                    </a>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION: THE EXPERIENCE (VIBE) -->
+        <section id="vibe" class="py-32 w-full">
+            <div class="max-w-7xl mx-auto px-6">
+                
+                <div class="reveal opacity-0 translate-y-8 transition-all duration-1000 mb-16 flex flex-col md:flex-row justify-between items-end gap-8">
+                    <div>
+                        <span class="font-['Space_Mono'] text-[10px] text-[#C8922A] tracking-[0.3em] uppercase block mb-6">[ The Vibe ]</span>
+                        <h2 class="font-['Cormorant_Garamond'] font-light text-5xl md:text-7xl text-[#F0EAE0] tracking-tight leading-[1.1]">Not Just a Bar.<br><span class="italic text-[#C8922A]">A Theatre of Senses.</span></h2>
+                    </div>
+                    <p class="font-['Jost'] font-light text-sm text-[#7A7070] max-w-sm pb-2">
+                        Immerse yourself in a dimly lit sanctuary where deep velvet, amber candlelight, and avant-garde design set the stage for an unforgettable night.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6 h-auto md:h-[600px]">
+                    <div class="md:col-span-7 h-[400px] md:h-full overflow-hidden reveal opacity-0 translate-y-8 transition-all duration-1000 image-hover hover-trigger">
+                        <img src="https://images.unsplash.com/photo-1572116469696-31de0f17cc34?w=1200&q=80" alt="Bar Atmosphere" class="w-full h-full object-cover grayscale-[30%] hover:grayscale-0 transition-all duration-700 hover:scale-105 parallax-img" data-speed="0.1">
+                    </div>
+                    <div class="md:col-span-5 flex flex-col gap-6 h-[600px] md:h-full">
+                        <div class="h-1/2 overflow-hidden reveal opacity-0 translate-y-8 transition-all duration-1000 delay-100 image-hover hover-trigger">
+                            <img src="https://images.unsplash.com/photo-1566417713940-fe7c737a9ef2?w=600&q=80" alt="Details" class="w-full h-full object-cover grayscale-[30%] hover:grayscale-0 transition-all duration-700 hover:scale-105 parallax-img" data-speed="0.15">
+                        </div>
+                        <div class="h-1/2 overflow-hidden reveal opacity-0 translate-y-8 transition-all duration-1000 delay-200 image-hover hover-trigger relative">
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#080608] to-transparent z-10 opacity-60"></div>
+                            <img src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/4734259a-bad7-422f-981e-ce01e79184f2_1600w.jpg" alt="Cocktail making" class="w-full h-full object-cover grayscale-[30%] hover:grayscale-0 transition-all duration-700 hover:scale-105 parallax-img" data-speed="0.2">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION: EVENTS & RESERVATIONS -->
+        <section id="events" class="py-32 bg-[#15111A] border-y border-[#1E1A22] relative z-10">
+            <div class="max-w-6xl mx-auto px-6">
+                
+                <div class="reveal opacity-0 translate-y-8 transition-all duration-1000 text-center mb-20">
+                    <span class="font-['Space_Mono'] text-[10px] text-[#C8922A] tracking-[0.3em] uppercase block mb-6">[ Upcoming Events ]</span>
+                    <h2 class="font-['Cormorant_Garamond'] font-light text-5xl md:text-7xl text-[#F0EAE0] tracking-tight">Magic in the Making</h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+                    
+                    <div class="reveal opacity-0 translate-y-8 transition-all duration-1000 bg-[#080608] border-l-[3px] border-[#C8922A] p-8 hover:-translate-y-2 transition-transform duration-500 hover-trigger">
+                        <span class="font-['Space_Mono'] text-[10px] text-[#C8922A] tracking-widest uppercase block mb-4">Every Friday</span>
+                        <h3 class="font-['Cormorant_Garamond'] font-normal text-2xl text-[#F0EAE0] mb-4">Live Jazz & Cocktails</h3>
+                        <p class="font-['Jost'] font-light text-xs text-[#7A7070] leading-relaxed">Smooth jazz, handcrafted cocktails and the illuminated Qutub Minar at sunset setting the perfect weekend rhythm.</p>
+                    </div>
+
+                    <div class="reveal opacity-0 translate-y-8 transition-all duration-1000 delay-100 bg-[#080608] border-l-[3px] border-[#C8922A] p-8 hover:-translate-y-2 transition-transform duration-500 hover-trigger">
+                        <span class="font-['Space_Mono'] text-[10px] text-[#C8922A] tracking-widest uppercase block mb-4">Saturdays</span>
+                        <h3 class="font-['Cormorant_Garamond'] font-normal text-2xl text-[#F0EAE0] mb-4">Cocktail Masterclass</h3>
+                        <p class="font-['Jost'] font-light text-xs text-[#7A7070] leading-relaxed">Learn the art of mixology from our master bartenders. Discover the secrets behind our theatrical signature pours.</p>
+                    </div>
+
+                    <div class="reveal opacity-0 translate-y-8 transition-all duration-1000 delay-200 bg-[#080608] border-l-[3px] border-[#C8922A] p-8 hover:-translate-y-2 transition-transform duration-500 hover-trigger">
+                        <span class="font-['Space_Mono'] text-[10px] text-[#C8922A] tracking-widest uppercase block mb-4">By Appointment</span>
+                        <h3 class="font-['Cormorant_Garamond'] font-normal text-2xl text-[#F0EAE0] mb-4">Private Dining Experience</h3>
+                        <p class="font-['Jost'] font-light text-xs text-[#7A7070] leading-relaxed">Exclusive closed-door dining with bespoke multi-course menus, cocktail pairings, and dedicated service.</p>
+                    </div>
+
+                </div>
+
+                <div class="text-center reveal opacity-0 translate-y-8 transition-all duration-1000">
+                    <a href="#reserve" class="inline-block bg-[#C8922A] text-[#080608] font-['Space_Mono'] text-xs tracking-widest uppercase px-12 py-5 animate-pulse-glow hover-trigger transition-transform hover:-translate-y-1 w-full md:w-auto max-w-md mx-auto">
+                        Reserve Your Experience
+                    </a>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION: ABOUT / STORY -->
+        <section class="py-32 w-full">
+            <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-12 gap-16 items-center">
+                
+                <div class="md:col-span-5 h-[600px] overflow-hidden reveal opacity-0 translate-x-[-8px] transition-all duration-1000 relative image-hover hover-trigger">
+                    <div class="absolute inset-0 bg-[#C8922A]/10 mix-blend-overlay z-10 pointer-events-none"></div>
+                    <img src="https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=800&q=80" alt="Atmospheric portrait" class="w-full h-full object-cover grayscale-[20%] parallax-img" data-speed="0.1">
+                </div>
+
+                <div class="md:col-span-7 flex flex-col reveal opacity-0 translate-x-[8px] transition-all duration-1000 delay-200">
+                    <span class="font-['Space_Mono'] text-[10px] text-[#C8922A] tracking-[0.3em] uppercase block mb-6">[ Our Story ]</span>
+                    
+                    <h2 class="font-['Cormorant_Garamond'] font-light text-4xl md:text-5xl text-[#F0EAE0] tracking-tight leading-[1.1] mb-8">
+                        Born from a Shared Love<br>
+                        <span class="italic text-[#C8922A]">of Storytelling</span>
+                    </h2>
+                    
+                    <div class="font-['Jost'] font-light text-sm text-[#7A7070] leading-[2.0] space-y-6 max-w-lg mb-10">
+                        <p>
+                            Potions Cocktail Theatre was born from a vision — to create a space where every drink has a narrative, every plate tells a story, and every evening becomes an unforgettable memory.
+                        </p>
+                        <p>
+                            Founded by Sunny Leone and Sahil Baweja at the iconic Ambawatta One, Delhi — with the historic Qutub Minar as our timeless backdrop — Potions is not just a bar. It's a stage where culinary arts and mixology perform a nightly symphony.
+                        </p>
+                    </div>
+
+                    <div class="border-l-2 border-[#C8922A] pl-6 mb-10">
+                        <p class="font-['Playfair_Display'] italic text-xl text-[#C8922A] leading-relaxed">
+                            "Every evening is a performance.<br>You are our honoured guest."
+                        </p>
+                    </div>
+
+                    <div>
+                        <p class="font-['Space_Mono'] text-[11px] text-[#C8922A] tracking-widest uppercase mb-1">Sunny Leone · Sahil Baweja</p>
+                        <p class="font-['Space_Mono'] text-[9px] text-[#7A7070] tracking-widest uppercase">Founders, Potions Cocktail Theatre</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION: TESTIMONIALS -->
+        <section class="py-32 bg-[#0F0C10] border-y border-[#1E1A22] relative z-10">
+            <div class="max-w-5xl mx-auto px-6 flex flex-col items-center">
+                
+                <span class="font-['Space_Mono'] text-[10px] text-[#C8922A] tracking-[0.3em] uppercase block mb-12">[ What They Say ]</span>
+
+                <div class="reveal opacity-0 translate-y-8 transition-all duration-1000 text-center max-w-3xl mb-20">
+                    <div class="text-[#C8922A] text-xl tracking-widest mb-6">★★★★★</div>
+                    <p class="font-['Cormorant_Garamond'] italic text-2xl md:text-3xl text-[#F0EAE0] leading-[1.7] mb-8">
+                        "An evening at Potions is unlike anything else in Delhi. The cocktails are extraordinary, the theatrical presentation is mesmerizing, and the view of the Qutub Minar is pure magic."
+                    </p>
+                    <span class="font-['Space_Mono'] text-[10px] text-[#C8922A] tracking-[0.2em] uppercase">
+                        — GOOGLE REVIEW · ★★★★★
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+                    
+                    <div class="reveal opacity-0 translate-y-8 transition-all duration-1000 bg-[#15111A] p-6 border border-[#1E1A22]">
+                        <div class="text-[#C8922A] text-xs mb-3">★★★★★</div>
+                        <p class="font-['Jost'] font-light text-[13px] text-[#7A7070] leading-relaxed">"The attention to detail in both the food and the drinks is outstanding. A must-visit premium spot in Mehrauli."</p>
+                    </div>
+
+                    <div class="reveal opacity-0 translate-y-8 transition-all duration-1000 delay-100 bg-[#15111A] p-6 border border-[#1E1A22]">
+                        <div class="text-[#C8922A] text-xs mb-3">★★★★★</div>
+                        <p class="font-['Jost'] font-light text-[13px] text-[#7A7070] leading-relaxed">"Not just a bar, a true experience. The Amber Fog cocktail is a masterpiece. Stunning ambience."</p>
+                    </div>
+
+                    <div class="reveal opacity-0 translate-y-8 transition-all duration-1000 delay-200 bg-[#15111A] p-6 border border-[#1E1A22]">
+                        <div class="text-[#C8922A] text-xs mb-3">★★★★★</div>
+                        <p class="font-['Jost'] font-light text-[13px] text-[#7A7070] leading-relaxed">"Spectacular setting looking right at the Qutub Minar. High-end luxury with incredible service."</p>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION: CONTACT / RESERVE -->
+        <section id="reserve" class="py-0 relative w-full flex flex-col md:flex-row">
+            
+            <div class="w-full md:w-1/2 py-32 px-6 md:px-20 flex flex-col justify-center border-r border-[#1E1A22]">
+                <div class="reveal opacity-0 translate-x-[-12px] transition-all duration-1000 max-w-md mx-auto md:ml-auto md:mr-0">
+                    
+                    <h2 class="font-['Cormorant_Garamond'] font-light text-5xl md:text-6xl tracking-tight leading-[1.1] mb-12">
+                        <span class="text-[#F0EAE0] block">Find Us at</span>
+                        <span class="italic text-[#C8922A] block">Ambawatta One</span>
+                        <span class="text-[#F0EAE0] block">New Delhi.</span>
+                    </h2>
+
+                    <div class="font-['Space_Mono'] text-[11px] text-[#F0EAE0] leading-relaxed space-y-6 mb-16 tracking-wide">
+                        <div class="flex items-start gap-4 hover-trigger">
+                            <iconify-icon icon="solar:map-point-linear" stroke-width="1.5" class="text-[#C8922A] text-lg mt-0.5"></iconify-icon>
+                            <p>Ambawatta One, Qutub Minar Marg,<br>Mehrauli, New Delhi 110030</p>
+                        </div>
+                        <div class="flex items-center gap-4 hover-trigger">
+                            <iconify-icon icon="solar:phone-linear" stroke-width="1.5" class="text-[#C8922A] text-lg"></iconify-icon>
+                            <p>+91 84484 40330</p>
+                        </div>
+                        <div class="flex items-center gap-4 hover-trigger">
+                            <iconify-icon icon="solar:clock-circle-linear" stroke-width="1.5" class="text-[#C8922A] text-lg"></iconify-icon>
+                            <p>Open Daily: 12PM – 1AM</p>
+                        </div>
+                        <div class="flex items-center gap-4 hover-trigger">
+                            <iconify-icon icon="solar:letter-linear" stroke-width="1.5" class="text-[#C8922A] text-lg"></iconify-icon>
+                            <p>reservations@potionsdelhi.com</p>
+                        </div>
+                    </div>
+
+                    <p class="font-['Space_Mono'] text-[10px] text-[#C8922A] tracking-[0.2em] uppercase">
+                        By @sunnyleone & @sahillbaweja02
+                    </p>
+
+                </div>
+            </div>
+
+            <div class="w-full md:w-1/2 py-32 px-6 md:px-20 bg-[#0F0C10] flex flex-col justify-center">
+                <div class="reveal opacity-0 translate-x-[12px] transition-all duration-1000 max-w-md mx-auto md:mr-auto md:ml-0 w-full">
+                    
+                    <span class="font-['Space_Mono'] text-[10px] text-[#C8922A] tracking-[0.3em] uppercase block mb-10">[ Reserve a Table ]</span>
+
+                    <form class="space-y-8 w-full" onsubmit="event.preventDefault();">
+                        
+                        <div class="relative group">
+                            <input type="text" id="name" required class="w-full bg-transparent border-b border-[#1E1A22] text-[#F0EAE0] font-['Space_Mono'] text-xs py-3 outline-none focus:border-[#C8922A] transition-colors peer hover-trigger placeholder-transparent" placeholder="Name">
+                            <label for="name" class="absolute left-0 top-3 text-[#7A7070] font-['Space_Mono'] text-xs uppercase tracking-widest transition-all peer-focus:-top-4 peer-focus:text-[9px] peer-focus:text-[#C8922A] peer-valid:-top-4 peer-valid:text-[9px] peer-valid:text-[#C8922A] pointer-events-none">Name</label>
+                        </div>
+
+                        <div class="relative group">
+                            <input type="tel" id="phone" required class="w-full bg-transparent border-b border-[#1E1A22] text-[#F0EAE0] font-['Space_Mono'] text-xs py-3 outline-none focus:border-[#C8922A] transition-colors peer hover-trigger placeholder-transparent" placeholder="Phone Number">
+                            <label for="phone" class="absolute left-0 top-3 text-[#7A7070] font-['Space_Mono'] text-xs uppercase tracking-widest transition-all peer-focus:-top-4 peer-focus:text-[9px] peer-focus:text-[#C8922A] peer-valid:-top-4 peer-valid:text-[9px] peer-valid:text-[#C8922A] pointer-events-none">Phone Number</label>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-8">
+                            <div class="relative group">
+                                <input type="date" id="date" required class="w-full bg-transparent border-b border-[#1E1A22] text-[#F0EAE0] font-['Space_Mono'] text-xs py-3 outline-none focus:border-[#C8922A] transition-colors peer hover-trigger" style="color-scheme: dark;">
+                                <label for="date" class="absolute left-0 -top-4 text-[#C8922A] font-['Space_Mono'] text-[9px] uppercase tracking-widest">Date</label>
+                            </div>
+                            <div class="relative group">
+                                <input type="time" id="time" required class="w-full bg-transparent border-b border-[#1E1A22] text-[#F0EAE0] font-['Space_Mono'] text-xs py-3 outline-none focus:border-[#C8922A] transition-colors peer hover-trigger" style="color-scheme: dark;">
+                                <label for="time" class="absolute left-0 -top-4 text-[#C8922A] font-['Space_Mono'] text-[9px] uppercase tracking-widest">Time</label>
+                            </div>
+                        </div>
+
+                        <div class="relative group">
+                            <select id="guests" required class="w-full bg-transparent border-b border-[#1E1A22] text-[#F0EAE0] font-['Space_Mono'] text-xs py-3 outline-none focus:border-[#C8922A] transition-colors peer hover-trigger appearance-none">
+                                <option value="" disabled selected hidden></option>
+                                <option value="1" class="bg-[#15111A]">1 Guest</option>
+                                <option value="2" class="bg-[#15111A]">2 Guests</option>
+                                <option value="3" class="bg-[#15111A]">3 Guests</option>
+                                <option value="4" class="bg-[#15111A]">4 Guests</option>
+                                <option value="5+" class="bg-[#15111A]">5+ Guests</option>
+                            </select>
+                            <label for="guests" class="absolute left-0 top-3 text-[#7A7070] font-['Space_Mono'] text-xs uppercase tracking-widest transition-all peer-focus:-top-4 peer-focus:text-[9px] peer-focus:text-[#C8922A] peer-valid:-top-4 peer-valid:text-[9px] peer-valid:text-[#C8922A] pointer-events-none">Number of Guests</label>
+                            <iconify-icon icon="solar:alt-arrow-down-linear" class="absolute right-0 top-4 text-[#7A7070] pointer-events-none"></iconify-icon>
+                        </div>
+
+                        <button type="submit" class="w-full bg-[#C8922A] text-[#080608] font-['Space_Mono'] text-xs tracking-widest uppercase py-5 mt-4 hover-trigger transition-all hover:shadow-[0_0_20px_rgba(200,146,42,0.4)]">
+                            Book My Table
+                        </button>
+
+                    </form>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="bg-[#050306] border-t border-[#1E1A22] pt-24 pb-0 relative overflow-hidden z-20">
+            <div class="max-w-7xl mx-auto px-6 flex flex-col items-center text-center">
+                
+                <div class="text-[#C8922A] text-xl mb-4">▲</div>
+                <h2 class="font-['Cormorant_Garamond'] font-light text-3xl md:text-4xl text-[#F0EAE0] tracking-[0.4em] uppercase mb-2">Potions</h2>
+                <span class="font-['Space_Mono'] text-[10px] text-[#C8922A] tracking-[0.4em] uppercase mb-8">Cocktail Theatre</span>
+
+                <p class="font-['Cormorant_Garamond'] italic text-sm md:text-base text-[#7A7070] mb-12 max-w-md">
+                    Cocktails with a Story · Plates that Sizzle · Qutub Minar in the View
+                </p>
+
+                <div class="flex flex-wrap justify-center gap-8 font-['Space_Mono'] text-[10px] text-[#7A7070] tracking-[0.15em] uppercase mb-16">
+                    <a href="#cocktails" class="hover:text-[#C8922A] transition-colors hover-trigger">Cocktails</a>
+                    <a href="#kitchen" class="hover:text-[#C8922A] transition-colors hover-trigger">Food</a>
+                    <a href="#vibe" class="hover:text-[#C8922A] transition-colors hover-trigger">Vibe</a>
+                    <a href="#events" class="hover:text-[#C8922A] transition-colors hover-trigger">Events</a>
+                    <a href="#reserve" class="hover:text-[#C8922A] transition-colors hover-trigger">Reserve</a>
+                </div>
+
+                <div class="flex gap-6 mb-16">
+                    <a href="#" class="text-[#7A7070] hover:text-[#C8922A] transition-colors hover-trigger">
+                        <iconify-icon icon="solar:instagram-linear" class="text-2xl"></iconify-icon>
+                    </a>
+                    <a href="#" class="text-[#7A7070] hover:text-[#C8922A] transition-colors hover-trigger">
+                        <iconify-icon icon="solar:facebook-linear" class="text-2xl"></iconify-icon>
+                    </a>
+                </div>
+
+                <div class="border-t border-[#1E1A22] w-full pt-8 pb-12 flex justify-center">
+                    <p class="font-['Space_Mono'] text-[9px] text-[#7A7070] tracking-widest text-center">
+                        © 2025 Potions Cocktail Theatre. Ambawatta One, New Delhi.
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- Bottom Marquee -->
+            <div class="w-full overflow-hidden border-t border-[#1E1A22] py-2 bg-[#050306]">
+                <div class="whitespace-nowrap flex w-[200%] animate-marquee">
+                    <span class="font-['Space_Mono'] text-[9px] text-[#333333] tracking-[0.3em] uppercase mx-4">
+                        COCKTAILS WITH A STORY ·· MAGIC IN THE AIR ·· AMBAWATTA ONE DELHI ·· BY SUNNY LEONE & SAHIL BAWEJA ··
+                    </span>
+                    <span class="font-['Space_Mono'] text-[9px] text-[#333333] tracking-[0.3em] uppercase mx-4">
+                        COCKTAILS WITH A STORY ·· MAGIC IN THE AIR ·· AMBAWATTA ONE DELHI ·· BY SUNNY LEONE & SAHIL BAWEJA ··
+                    </span>
+                </div>
+            </div>
+        </footer>
+
+    </main>
+
+    <!-- Scripts -->
+    <script>
+        // 1. Preloader & Intro Sequence
+        window.addEventListener('load', () => {
+            const title = document.getElementById('preloader-title');
+            const text = "POTIONS";
+            title.innerHTML = '';
+            
+            // Fade in symbol
+            setTimeout(() => {
+                document.getElementById('preloader-symbol').style.opacity = '1';
+            }, 500);
+
+            // Typing effect
+            let i = 0;
+            setTimeout(() => {
+                const typeInterval = setInterval(() => {
+                    if (i < text.length) {
+                        title.innerHTML += text.charAt(i);
+                        i++;
+                    } else {
+                        clearInterval(typeInterval);
+                        // Subtitle fade in
+                        setTimeout(() => {
+                            document.getElementById('preloader-subtitle').style.opacity = '1';
+                        }, 200);
+                        // Line grow
+                        setTimeout(() => {
+                            document.getElementById('preloader-line').style.width = '120px';
+                        }, 700);
+                        // Open Curtains
+                        setTimeout(() => {
+                            document.getElementById('curtain-left').style.transform = 'translateX(-101%)';
+                            document.getElementById('curtain-right').style.transform = 'translateX(101%)';
+                            
+                            // Initialize Hero Reveal
+                            setTimeout(() => {
+                                document.getElementById('preloader').style.display = 'none';
+                                document.getElementById('hero-bg').style.opacity = '1';
+                                
+                                // Reveal Hero elements
+                                document.querySelectorAll('.hero-line').forEach(el => {
+                                    el.style.transform = 'translateY(0)';
+                                });
+                                document.querySelectorAll('.hero-el').forEach(el => {
+                                    el.style.opacity = '1';
+                                    el.style.transform = 'translateY(0)';
+                                });
+                            }, 1200);
+                        }, 2000);
+                    }
+                }, 150); // Speed of typing
+            }, 1000); // Initial delay
+        });
+
+        // 2. Custom Cursor Logic
+        const cursorDot = document.getElementById('cursor-dot');
+        const cursorCircle = document.getElementById('cursor-circle');
+        const cursorText = document.getElementById('cursor-text');
+        
+        let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+        let circleX = mouseX, circleY = mouseY;
+        let isHovering = false;
+        let isImageHover = false;
+        
+        // Hide cursor on touch devices
+        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        if (isTouchDevice) {
+            cursorDot.style.display = 'none';
+            cursorCircle.style.display = 'none';
+        } else {
+            window.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                cursorDot.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
+            });
+
+            const loop = () => {
+                circleX += (mouseX - circleX) * 0.09;
+                circleY += (mouseY - circleY) * 0.09;
+                cursorCircle.style.transform = `translate(${circleX}px, ${circleY}px)`;
+                requestAnimationFrame(loop);
+            };
+            loop();
+
+            // Hover effects
+            const addHoverEvents = () => {
+                document.querySelectorAll('.hover-trigger').forEach(el => {
+                    el.addEventListener('mouseenter', () => {
+                        isHovering = true;
+                        cursorCircle.style.width = '50px';
+                        cursorCircle.style.height = '50px';
+                        cursorCircle.style.backgroundColor = 'rgba(200,146,42,0.1)';
+                        cursorDot.style.transform = `translate(${mouseX}px, ${mouseY}px) scale(1.5)`;
+                    });
+                    el.addEventListener('mouseleave', () => {
+                        isHovering = false;
+                        if(!isImageHover) resetCursor();
+                    });
+                });
+
+                document.querySelectorAll('.image-hover').forEach(el => {
+                    el.addEventListener('mouseenter', () => {
+                        isImageHover = true;
+                        cursorCircle.style.width = '70px';
+                        cursorCircle.style.height = '70px';
+                        cursorCircle.style.backgroundColor = 'rgba(8,6,8,0.5)';
+                        cursorCircle.style.backdropFilter = 'blur(4px)';
+                        cursorText.innerText = 'EXPLORE';
+                        cursorText.style.opacity = '1';
+                        cursorDot.style.opacity = '0';
+                    });
+                    el.addEventListener('mouseleave', () => {
+                        isImageHover = false;
+                        resetCursor();
+                    });
+                });
+            };
+
+            const resetCursor = () => {
+                cursorCircle.style.width = '40px';
+                cursorCircle.style.height = '40px';
+                cursorCircle.style.backgroundColor = 'transparent';
+                cursorCircle.style.backdropFilter = 'none';
+                cursorText.style.opacity = '0';
+                cursorDot.style.opacity = '1';
+                cursorDot.style.transform = `translate(${mouseX}px, ${mouseY}px) scale(1)`;
+            };
+
+            // Call once dom loaded
+            document.addEventListener('DOMContentLoaded', addHoverEvents);
+        }
+
+        // 3. Scroll Events: Nav Blur, Parallax, Progress, Reveal
+        const navbar = document.getElementById('navbar');
+        const scrollProgress = document.getElementById('scroll-progress');
+        const parallaxElements = document.querySelectorAll('.parallax-img');
+        const revealElements = document.querySelectorAll('.reveal');
+
+        // Intersection Observer for Reveals
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translate(0, 0)';
+                    revealObserver.unobserve(entry.target); // Only reveal once
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // Request Animation Frame for smooth scroll effects
+        let ticking = false;
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    const scrollY = window.scrollY;
+                    
+                    // Navbar
+                    if (scrollY > 80) {
+                        navbar.classList.add('bg-[#080608]/90', 'backdrop-blur-md', 'border-[#1E1A22]');
+                        navbar.classList.remove('border-transparent');
+                        navbar.style.paddingTop = '12px';
+                        navbar.style.paddingBottom = '12px';
+                    } else {
+                        navbar.classList.remove('bg-[#080608]/90', 'backdrop-blur-md', 'border-[#1E1A22]');
+                        navbar.classList.add('border-transparent');
+                        navbar.style.paddingTop = '20px';
+                        navbar.style.paddingBottom = '20px';
+                    }
+
+                    // Progress Bar
+                    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                    const scrolled = (scrollY / height) * 100;
+                    scrollProgress.style.width = scrolled + '%';
+
+                    // Parallax
+                    parallaxElements.forEach(el => {
+                        const speed = el.getAttribute('data-speed') || 0.2;
+                        // Calculate offset relative to viewport to only parallax when visible
+                        const rect = el.getBoundingClientRect();
+                        if(rect.top < window.innerHeight && rect.bottom > 0) {
+                            const yPos = -(rect.top * speed);
+                            el.style.transform = `translateY(${yPos}px) scale(1.1)`; // Keep scaled slightly to prevent edges showing
+                        }
+                    });
+
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        });
+
+        // 4. Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+        let menuOpen = false;
+
+        mobileMenuBtn.addEventListener('click', () => {
+            menuOpen = !menuOpen;
+            if(menuOpen) {
+                mobileMenu.style.opacity = '1';
+                mobileMenu.style.pointerEvents = 'auto';
+                mobileMenuBtn.children[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+                mobileMenuBtn.children[1].style.opacity = '0';
+                mobileMenuBtn.children[2].style.width = '24px';
+                mobileMenuBtn.children[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
+            } else {
+                mobileMenu.style.opacity = '0';
+                mobileMenu.style.pointerEvents = 'none';
+                mobileMenuBtn.children[0].style.transform = 'none';
+                mobileMenuBtn.children[1].style.opacity = '1';
+                mobileMenuBtn.children[2].style.width = '16px';
+                mobileMenuBtn.children[2].style.transform = 'none';
+            }
+        });
+
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if(menuOpen) mobileMenuBtn.click();
+            });
+        });
+
+    </script>
+</body>
+</html>
